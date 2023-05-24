@@ -9,7 +9,7 @@ import dotenv from "dotenv";
 import { config } from "./config.js";
 import { Server } from "socket.io";
 import { initSocket } from "./connection/socket.js";
-import { db } from "./db/database.js";
+import { db, sequelize } from "./db/database.js";
 
 dotenv.config();
 
@@ -34,6 +34,8 @@ app.use((error, req, res, next) => {
   res.sendStatus(500);
 });
 
-db.getConnection().then(console.log);
-const server = app.listen(config.host.port);
-initSocket(server);
+sequelize.sync().then((client) => {
+  //데이터베이스에 연결 되고 난 이후 서버를 실행한다.
+  const server = app.listen(config.host.port);
+  initSocket(server);
+});
