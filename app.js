@@ -15,10 +15,15 @@ dotenv.config();
 
 const app = express();
 
+const corsOption = {
+  origin: config.cors.allowedOrigin,
+  optionsSuccessStatus: 200,
+};
+
 //사용할 미들웨어 세팅
 app.use(express.json());
 app.use(helmet());
-app.use(cors());
+app.use(cors(corsOption));
 app.use(morgan("tiny"));
 
 //"/tweets"에 관련된 요청은 tweetsRoute에 가도록
@@ -36,6 +41,7 @@ app.use((error, req, res, next) => {
 
 sequelize.sync().then(() => {
   //데이터베이스에 연결 되고 난 이후 서버를 실행한다.
-  const server = app.listen(config.host.port);
+  console.log(`Server is started... ${new Date()}`);
+  const server = app.listen(config.port);
   initSocket(server);
 });
